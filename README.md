@@ -27,7 +27,7 @@ These are the button functions added:
 5. D Pad Left - Minus 1 weapon type/1 weapon model/0.5 stars/1 mod ID (2/3/2.0/16 with "alternate mode")
 6. D Pad Right - Plus 1 weapon type/1 weapon model/0.5 stars/1 mod ID (2/3/2.0/16 with "alternate mode")
 7. B - Reset current slot (3.0 for stars, Mod ID = the maximum mod ID divided by 2 for mods). The resetting of the current slot does not occur with "alternate mode" enabled; instead:
-	* Having the type or model slot selected duplicates the current weapon
+	* Having the type or model slot selected duplicates the current weapon (this change will not be reflected until the fusion grid menu is refreshed, such as by re-entering it or performing a fusion)
 	* Having the ranged or melee star slots selected resets the current weapon to v100
 	* Having an affix slot selected should sort the weapon's modifiers (not yet implemented)
 
