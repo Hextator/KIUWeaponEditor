@@ -33,6 +33,7 @@ These are the button functions added:
 # License
 1. You may use the parts of this software shared in this repository, but you must be aware of how you can donate to my well being, and that I am not very healthy, and very much in need of financial support. To that end, you may: [become my patron on ![P](https://i.imgur.com/5URQWRR.png)atreon](https://www.patreon.com/hextator)
 	* You use my software at your own peril. No warranty is provided and I disclaim all liability.
+	* You may only share this software by linking to this repository, when this repository contains this license.
 2. You may copy or modify the parts of this software shared in this repository with direct permission from me, Hextator. I can be reached via Discord; my handle is `Hextator#6552`.
 	* Any use of my source code, in this repository or otherwise, must be attributed to me (Hextator).
 	* You may not use my software for financial gain without cutting me in on the deal, and the terms must be decided entirely by me, subject to change on a whim.
