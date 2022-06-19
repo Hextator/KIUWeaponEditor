@@ -1,5 +1,6 @@
 # KIUWeaponEditor
 In-game weapon editor for Kid Icarus: Uprising compatible with the Rosalina sysmodule trainer.
+Consider [becoming my patron on ![P](https://i.imgur.com/5URQWRR.png)atreon](https://www.patreon.com/hextator) if you like this software; I really need to help.
 
 # Installation
 Copy the appropriate `[Title ID].txt` from the `Codes` directory into the folder (probably `./cheats`), of your SD card, that your Rosalina sysmodule (of the Luma3DS custom firmware) uses for loading cheats.
