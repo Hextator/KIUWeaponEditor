@@ -1,7 +1,7 @@
 #ifndef __FUSIONGRIDCAVE_CPP__
 #define __FUSIONGRIDCAVE_CPP__
 
-#include "kiu3DSusa1.0.h"
+#include "kiu3DS.h"
 
 #include "fusionGridCave.h"
 
@@ -9,7 +9,6 @@ HARDWARE_OFFSET_ARM(TARGET_MEDIA_ADDRESS)
 
 void Context_fusionGridCave(void);
 
-NOINLINE
 void Entry_fusionGridCave(void) {
 	HOOK(MOD_SECTION_ADDRESS);
 	HEAD;
@@ -21,6 +20,7 @@ void Entry_fusionGridCave(void) {
 
 	RESTORE_GPRS;
 
+#ifdef __VERSION_USA1_0__
 	COMMENT(" Replaced instructions");
 	LOAD_SYM(r0, r5ref);
 _asm("	ldr     r0, [r0]");
@@ -33,13 +33,15 @@ _asm("	bx      r6");
 	LABEL(r5ref);
 	LONG(CONTEXT_FUSIONGRID_UNKSTATICPTR0);
 	LABEL(returnAddr);
+	// TOMAYBE: The hook is linked separately, so the hook size has to be hardcoded here;
+	// should the hook and cave be linked together?
 	LONG(CONTEXT_FUSIONGRID_SAFEHOOKADDRESS + 0x10);
+#endif
 
 	HOOKEND;
 }
 
 // Assemble to here
-NOINLINE
 void __SECTION_FUSIONGRIDCAVE__(void) {
 	CONTINUE(Entry_fusionGridCave);
 
@@ -55,7 +57,6 @@ void __SECTION_FUSIONGRIDCAVE__(void) {
 // ARM has no intrinsic integer division, so we need another way to clamp values
 #include "extensions/arm_modulusclamp_s32_0toN.cpp"
 
-NOINLINE
 bool initializeMemory(void) {
 	// Don't attempt to make the page writeable if it already is!
 	if (0xDEADBEEF == fusionGridExternalGlobals->memoryInitialized) {
@@ -92,7 +93,6 @@ bool initializeMemory(void) {
 	return false;
 }
 
-NOINLINE
 void pollInput(void) {
 	fusionGridGlobals->lastKeys = fusionGridGlobals->currKeys;
 	fusionGridGlobals->currKeys = fusionGridExternalGlobals->keysHeld;
@@ -100,7 +100,6 @@ void pollInput(void) {
 
 void editWeapon(u32);
 
-NOINLINE
 void Context_fusionGridCave(void) {
 	PUSH(r7);
 
@@ -111,7 +110,6 @@ void Context_fusionGridCave(void) {
 	editWeapon(fodderAIndex);
 }
 
-NOINLINE
 void initializeWeaponEditor(void) {
 	if (0xDEADBEEF == fusionGridGlobals->weaponEditorInitialized) {
 		return;
@@ -193,7 +191,6 @@ void writeStars(Weapon* weapon, s32 rangedHalfStars, s32 meleeHalfStars) {
 	}
 }
 
-NOINLINE
 void editWeapon(u32 fodderAIndex) {
 	// Uh oh...
 	if (!initializeMemory()) {
@@ -209,19 +206,20 @@ void editWeapon(u32 fodderAIndex) {
 
 	// Get the reference to the selected fodder A weapon
 	u32 fusionGridStateRefAddr = *((u32*)CONTEXT_FUSIONGRID_UNKSTATICPTR0);
+#ifdef __VERSION_USA1_0__
 	fusionGridStateRefAddr += 0x2B400 + 0x12C;
+#endif
 	u8 fusionGridStateUnkBool0 = *((u8*)fusionGridStateRefAddr);
-	FuncP_WeaponRefFromInstanceID weaponFromIndexFunc = KIU_func_0x00234B00;
+	FuncP_WeaponRefFromInstanceID weaponFromIndexFunc = KIU_func_weaponRefFromInventoryIndex;
 	if (1 == fusionGridStateUnkBool0) {
-		weaponFromIndexFunc = KIU_func_0x002C9018;
+		weaponFromIndexFunc = KIU_func_weaponRefFromGemInventoryIndex;
 	}
 	Weapon* selectedWeapon = weaponFromIndexFunc(fodderAIndex);
 	if (NULL == selectedWeapon) {
 		return;
 	}
-	// TOMAYBE: Location may not be static;
-	// should we switch to locating it dynamically?
-	bool weaponInventoryAtExpectedLocation = 0 == ((((u32)selectedWeapon) - CURRENT_WEAPON_ARRAY_ADDR) - (fodderAIndex * sizeof(Weapon)));
+	Weapon* currentWeaponInventory = (Weapon*)((*((u32*)CONTEXT_FUSIONGRID_UNKSTATICPTR1)) + CURRENT_WEAPON_ARRAY_OFFSET);
+	//bool weaponInventoryAtExpectedLocation = 0 == ((((u32)selectedWeapon) - CURRENT_WEAPON_ARRAY_ADDR) - (fodderAIndex * sizeof(Weapon)));
 
 	// Dump debug info about the selected weapon
 	// TOMAYBE: Move this into its own function?
@@ -274,16 +272,12 @@ void editWeapon(u32 fodderAIndex) {
 				u32* weaponCountRef = *((u32**)CONTEXT_FUSIONGRID_UNKSTATICPTR1);
 				if (NULL != weaponCountRef) {
 					u32 weaponCountRefAddr = (u32)weaponCountRef;
-					weaponCountRefAddr += 0x6000;
-					weaponCountRefAddr += 0x278;
-					weaponCountRefAddr += 0x10000;
-					weaponCountRefAddr += 0x16C;
-					weaponCountRefAddr += 0x4;
+					weaponCountRefAddr += CURRENT_WEAPON_COUNT_OFFSET;
 					weaponCountRef = (u32*)weaponCountRefAddr;
 					u32 weaponCountData = *weaponCountRef;
 					int currWeaponCount = GET_WEAPON_COUNT(weaponCountData);
-					if (WEAPONINVENTORYSLOT_MAX > currWeaponCount && weaponInventoryAtExpectedLocation) {
-						Weapon* newWeapon = (Weapon*)(CURRENT_WEAPON_ARRAY_ADDR + (currWeaponCount * sizeof(Weapon)));
+					if (WEAPONINVENTORYSLOT_MAX > currWeaponCount) {
+						Weapon* newWeapon = &currentWeaponInventory[currWeaponCount];
 						bool dataEmpty = true;
 						destPtr = (u8*)(newWeapon);
 						srcPtr = (u8*)(selectedWeapon);
@@ -301,6 +295,10 @@ void editWeapon(u32 fodderAIndex) {
 							currWeaponCount += 1;
 							weaponCountData = SET_WEAPON_COUNT(weaponCountData, currWeaponCount);
 							*weaponCountRef = weaponCountData;
+							// Unfavorite the cloning result
+							u32 weaponBaseData = newWeapon->weaponBaseID;
+							weaponBaseData = SET_WEAPON_FAVORITED(weaponBaseData, 0);
+							newWeapon->weaponBaseID = weaponBaseData;
 						}
 					}
 				}
@@ -441,7 +439,25 @@ void editWeapon(u32 fodderAIndex) {
 				WEAPONEDITORSLOT_MODIFIER5 == fusionGridGlobals->weaponEditorSelectedSlot ||
 				WEAPONEDITORSLOT_MODIFIER6 == fusionGridGlobals->weaponEditorSelectedSlot
 			) {
-				// TODO: Sort modifiers
+				int modifierCount = 0;
+				u8 currentModifierIDs[MAX_MODIFIERS_PER_COLLECTION];
+				for (int i = 0; i < MAX_MODIFIERS_PER_COLLECTION; i++) {
+					u8 currModID = (u8)selectedWeapon->modifiers[i];
+					if (MODIFIERID_EMPTY != currModID) {
+						currentModifierIDs[modifierCount] = currModID;
+						modifierCount += 1;
+					}
+				}
+				if (0 < modifierCount) {
+					KIU_func_sortU8ModIDArray(&currentModifierIDs[0], modifierCount);
+					for (int i = 0; i < modifierCount; i++) {
+						selectedWeapon->modifiers[i] = currentModifierIDs[i];
+					}
+					// Clear unused modifier slots
+					for (int i = modifierCount; i < MAX_MODIFIERS_PER_COLLECTION; i++) {
+						selectedWeapon->modifiers[i] = MODIFIERID_EMPTY;
+					}
+				}
 			}
 		}
 	}

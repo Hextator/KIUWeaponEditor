@@ -1,7 +1,7 @@
 #ifndef __FUSIONGRIDCAVE_H__
 #define __FUSIONGRIDCAVE_H__
 
-#include "kiu3DSusa1.0.h"
+#include "kiu3DS.h"
 
 #include "../.common/globalVariables.h"
 

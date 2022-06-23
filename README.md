@@ -5,6 +5,7 @@ Consider [becoming my patron on ![P](https://i.imgur.com/5URQWRR.png)atreon](htt
 # Installation
 Copy the appropriate `[Title ID].txt` from the `Codes` directory into the folder (probably `./cheats`), of your SD card, that your Rosalina sysmodule (of the Luma3DS custom firmware) uses for loading cheats.
 If the codes are installed properly, you can enable them from the Rosalina menu as usual. The included `Input Scan` cheat must also be enabled, as the weapon editor uses it to...well, you can probably guess.
+As the `Input Scan` code relies on the Rosalina sysmodule to work, outdated versions of Rosalina may cause issues, so be sure your Luma CFW is up to date prior to installation.
 
 # Features
 The weapon editor adds support for new button functions within the weapon fusion menu (the "fusion grid"). The code is only executed there, so the extra button functions should not be active outside of that menu.
@@ -29,7 +30,7 @@ These are the button functions added:
 7. B - Reset current slot (3.0 for stars, Mod ID = the maximum mod ID divided by 2 for mods). The resetting of the current slot does not occur with "alternate mode" enabled; instead:
 	* Having the type or model slot selected duplicates the current weapon (this change will not be reflected until the fusion grid menu is refreshed, such as by re-entering it or performing a fusion)
 	* Having the ranged or melee star slots selected resets the current weapon to v100
-	* Having an affix slot selected should sort the weapon's modifiers (not yet implemented)
+	* Having an affix slot selected sorts the weapon's modifiers
 
 # License
 1. You may use the parts of this software shared in this repository, but you must be aware of how you can donate to my well being, and that I am not very healthy, and very much in need of financial support. To that end, you may: [become my patron on ![P](https://i.imgur.com/5URQWRR.png)atreon](https://www.patreon.com/hextator)

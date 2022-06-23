@@ -1,17 +1,17 @@
 #ifndef __FUSIONGRIDHOOK_CPP__
 #define __FUSIONGRIDHOOK_CPP__
 
-#include "kiu3DSusa1.0.h"
+#include "kiu3DS.h"
 
 #include "fusionGridHook.h"
 
 HARDWARE_OFFSET_ARM(TARGET_MEDIA_ADDRESS)
 
-NOINLINE
 void Hook_fusionGrid(void) {
 	HOOK(MOD_SECTION_ADDRESS);
 	HEAD;
 
+#ifdef __VERSION_USA1_0__
 	COMMENT(" Original instruction from those replaced");
 _asm("	add	r5, r4,  #0x2800");
 /*
@@ -25,6 +25,7 @@ _asm("	add	r5, r4");
 	LABEL(HookTarget_fusionGrid);
 	// +0x10 to make room for data meant to be visible to the Rosalina trainer
 	LONG(CONTEXT_FUSIONGRID_SAFERXADDRESS + 0x10 | MODE_BIT_ARM);
+#endif
 
 	HOOKEND;
 }

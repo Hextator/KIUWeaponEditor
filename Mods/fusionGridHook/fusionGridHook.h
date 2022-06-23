@@ -1,7 +1,7 @@
 #ifndef __FUSIONGRIDHOOK_H__
 #define __FUSIONGRIDHOOK_H__
 
-#include "kiu3DSusa1.0.h"
+#include "kiu3DS.h"
 
 #include "../.common/globalVariables.h"
 

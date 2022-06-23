@@ -36,6 +36,7 @@ include $(MAKEBUILDING)/n3ds/lib/devkitPro/libconfig.mk
 
 ### Generated variables
 
+VERSIONDEF   := $(shell "$(PYTHON)" -c "print('__VERSION_$(VERSION)__'.upper().replace('.', '_'))")
 MANIFESTS    := $(shell find . -name project.mf)
 ROSASOURCES  := $(shell find . -name *.rosa)
 

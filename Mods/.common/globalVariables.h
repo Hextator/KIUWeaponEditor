@@ -1,11 +1,17 @@
 #ifndef __GLOBALVARIABLES_H__
 #define __GLOBALVARIABLES_H__
 
-#include "kiu3DSusa1.0.h"
+#include "kiu3DS.h"
 
 // ----------------------------
 // Register global variables here
 // ----------------------------
+
+#ifdef __VERSION_USA1_0__
+#define CONTEXT_FUSIONGRID_SAFEHOOKADDRESS 0x002C7810
+#else
+#define CONTEXT_FUSIONGRID_SAFEHOOKADDRESS 0x????????
+#endif
 
 typedef struct CTX_FusionGrid_ExternalGlobals {
 	// Minimal HID polling
@@ -58,17 +64,15 @@ typedef enum WeaponEditorSlot {
 	WEAPONEDITORSLOT_MAX = 10,
 } WeaponEditorSlot;
 
-#define CONTEXT_FUSIONGRID_SAFEHOOKADDRESS 0x002C7810
-
 BYTE_ALIGN_ENTITY(0x10)
 CTX_FusionGrid_Globals fusionGridGlobalsMemory;
 
 //CTX_FusionGrid_Globals*const fusionGridGlobals = (CTX_FusionGrid_Globals*const)CONTEXT_FUSIONGRID_SAFENVRWADDRESS;
 CTX_FusionGrid_Globals*const fusionGridGlobals = (CTX_FusionGrid_Globals*const)&fusionGridGlobalsMemory;
 
-#define RWX_ALLOCATION_ADDRESS             (CONTEXT_FUSIONGRID_ENDOFHEAP - RWX_ALLOCATION_SIZE)
-#define RWX_ALLOCATION_SIZE                0x00010000
+//#define RWX_ALLOCATION_ADDRESS             (CONTEXT_FUSIONGRID_ENDOFHEAP - RWX_ALLOCATION_SIZE)
+//#define RWX_ALLOCATION_SIZE                0x00010000
 
-#define CONTEXT_FUSIONGRID_UNUSEDLHADDRESS (((LINEAR_HEAP_LOC + 0x02649C48) + 0x800) & ((u32)(0 - PAGE_SIZE)))
+//#define CONTEXT_FUSIONGRID_UNUSEDLHADDRESS (((LINEAR_HEAP_LOC + 0x02649C48) + 0x800) & ((u32)(0 - PAGE_SIZE)))
 
 #endif
